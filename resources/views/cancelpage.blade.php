@@ -11,7 +11,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
         margin: 0;
         background-repeat: no-repeat;
         background-attachment: fixed;
-  
+
 }
 
 .wrapper-1{
@@ -52,7 +52,7 @@ h1{
   margin-left: auto;
 }
 .footer-like{
-  margin-top: auto; 
+  margin-top: auto;
   background:#D7E6FE;
   padding:6px;
   text-align:center;
@@ -91,7 +91,7 @@ h1{
   margin-top:50px;
   box-shadow: 4px 8px 40px 8px rgba(88, 146, 255, 0.2);
 }
-  
+
 }
 
 .wrapper-2 p {
@@ -118,11 +118,11 @@ h1{
             <h1>Payment Cancelled !</h1>
             <p>Please retry again.</p>
             <p>You can buy our plans and enjoy the premium features.</p>
-                <a href="https://www.linkedin.com/" class="go-home w-40">
+                <a href="https://www.linkedin.com/messaging/" class="go-home w-40">
             Get Started
             </a>
         </div>
-      
+
       </div>
     </div>
 </div>

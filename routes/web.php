@@ -16,7 +16,7 @@ use App\Http\Controllers\StripeController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name("home");
 
 
 Route::controller(StripeController::class)->group(function () {

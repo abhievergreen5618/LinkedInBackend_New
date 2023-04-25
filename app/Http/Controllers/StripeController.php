@@ -17,7 +17,21 @@ class StripeController extends Controller
         $this->redirect_uri = "https://ilgjnilamjnkbfhoohaddnmfoecablec.chromiumapp.org/";
         $this->audience = "https://dev-1fo4733y5vtbyqis.us.auth0.com/api/v2/";
     }
-    
+
+    public function customerPortal(Request $request)
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $customer = $request->user_id;
+
+        $session = Stripe\BillingPortal\Session::create([
+            'customer' => $customer,
+            'return_url' => route('home'),
+        ]);
+
+        return response()->json(["session_url"  => $session->url]);
+    }
+
     public function createCheckoutSession(Request $request)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -30,11 +44,11 @@ class StripeController extends Controller
             'cancel_url' => route('cancel_url') .$parm,
             'customer' => $request['clientReferenceId'],
         ]);
-    
+
         return response()->json(['session_id' => $session->id]);
-        
+
     }
-    
+
     public function success(Request $request)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -45,27 +59,27 @@ class StripeController extends Controller
                 $access_token = $this->get_access_token();
 
                 $user_id = $request['user_id'];
-                 
+
                 $url = "https://".$this->domain."/api/v2/users/".$user_id;
-                
+
                 $metadata = [
                                 'stripe_subscription_id' => $response->subscription,
                                 'subscription_start' => date('Y-m-d H:i:s',$response->created),
                                 'subscription_end' => date('Y-m-d H:i:s',$response->expires_at),
                                 'role' => 'paid',
                             ];
-                                
+
                 $metadata = json_encode($metadata);
-                
+
                 $this->update_user_meta($access_token,$user_id,$url,$metadata);
-                
+
                 return redirect()->route("thankyou_page");
 
             }
-           
+
         }
     }
-    
+
     public function update_user_meta($access_token,$user_id,$url,$metadata)
     {
          $curl = curl_init();
@@ -84,20 +98,20 @@ class StripeController extends Controller
             "content-type: application/json"
           ],
         ]);
-        
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
-        
+
         curl_close($curl);
-        
+
         if ($err) {
         //   dd("cURL Error #:" . $err);
         } else {
         //   dd($response);
         }
     }
-    
-    
+
+
     public function get_access_token()
     {
             $curl = curl_init();
@@ -115,12 +129,12 @@ class StripeController extends Controller
                 "content-type: application/x-www-form-urlencoded"
               ],
             ]);
-            
+
             $response = curl_exec($curl);
             $err = curl_error($curl);
-            
+
             curl_close($curl);
-            
+
             if ($err) {
                   dd("cURL Error #:" . $err);
                 } else {
@@ -128,7 +142,7 @@ class StripeController extends Controller
                  return $response->access_token;
                 }
     }
-    
+
     public function cancel(Request $request)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -139,32 +153,32 @@ class StripeController extends Controller
                 $access_token = $this->get_access_token();
 
                 $user_id = $request['user_id'];
-                 
+
                 $url = "https://".$this->domain."/api/v2/users/".$user_id;
-                
+
                 $metadata = [
                                 'stripe_subscription_id' => $response->subscription,
                                 'subscription_start' => date('Y-m-d H:i:s',$response->created),
                                 'subscription_end' => date('Y-m-d H:i:s',$response->expires_at),
                                 'role' => 'free',
                             ];
-                                
+
                 $metadata = json_encode($metadata);
-                
+
                 $this->update_user_meta($access_token,$user_id,$url,$metadata);
-                
+
                 return redirect()->route("failed_page");
 
             }
-           
+
         }
     }
-    
+
     public function thankyou(Request $request)
     {
         return view("thankyoupage");
     }
-    
+
      public function failed(Request $request)
     {
         return view("cancelpage");

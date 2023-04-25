@@ -21,5 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::controller(StripeController::class)->group(function () {
     Route::post('/create/session','createCheckoutSession')->name('create.session');
-    Route::post('/customer-portal','createCheckoutSession')->name('customer-portal');
+    Route::post('/customer-portal','customerPortal')->name('customer-portal');
 });

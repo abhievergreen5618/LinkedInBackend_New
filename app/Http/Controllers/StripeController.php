@@ -24,7 +24,7 @@ class StripeController extends Controller
 
         $customer = $request->user_id;
 
-        $session = Stripe\BillingPortal\Session::create([
+        $session = \Stripe\BillingPortal\Session::create([
             'customer' => $customer,
             'return_url' => route('home'),
         ]);

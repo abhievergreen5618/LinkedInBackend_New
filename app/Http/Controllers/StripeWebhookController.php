@@ -199,7 +199,8 @@ class StripeWebhookController extends Controller
 
             $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
             $access_token = get_access_token();
-            $metadata = ['role' => 'free'];
+            $metadata['user_metadata'] = [];
+            $metadata['role'] = "free";
             $metadata = json_encode($metadata);
 
             update_user_meta($access_token,$url,$metadata);

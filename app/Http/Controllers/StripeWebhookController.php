@@ -61,8 +61,6 @@ class StripeWebhookController extends Controller
         // Get the contents of the specified file
         $payload = Storage::get($filename);
 
-        dd($payload);
-
         // Construct a new event object from the payload
         $event = \Stripe\Event::constructFrom(json_decode($payload, true));
 

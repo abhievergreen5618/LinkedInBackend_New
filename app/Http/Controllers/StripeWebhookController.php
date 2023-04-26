@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Event;
 use Stripe\Customer;
+use Illuminate\Support\Facades\Storage;
 
 class StripeWebhookController extends Controller
 {
@@ -30,6 +31,10 @@ class StripeWebhookController extends Controller
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
+        // Save the webhook response to a file
+        $filename = 'stripe_webhook_canceled.json';
+        Storage::put($filename, $payload);
+
         // Handle the event
         switch ($event->type) {
                 case 'subscription_schedule.canceled':
@@ -44,6 +49,29 @@ class StripeWebhookController extends Controller
             default:
                 // Unexpected event type
                 return response()->json(['error' => 'Unexpected event type'], 400);
+        }
+
+
+        return response()->json(['success' => true]);
+    }
+
+    public function replayWebhook($filename)
+    {
+        // Get the contents of the specified file
+        $payload = Storage::get($filename);
+
+        // Construct a new event object from the payload
+        $event = \Stripe\Event::constructFrom(json_decode($payload, true));
+
+        // Handle the event
+        switch ($event->type) {
+            case 'charge.succeeded':
+                // Handle successful charge event
+                break;
+            case 'charge.failed':
+                // Handle failed charge event
+                break;
+            // Add more event types here
         }
 
         return response()->json(['success' => true]);

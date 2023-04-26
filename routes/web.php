@@ -27,7 +27,10 @@ Route::controller(StripeController::class)->group(function () {
     Route::get('/cancel', 'cancel')->name('cancel_url');
 });
 
-Route::post('/stripe/webhook', 'StripeWebhookController@handleWebhook');
+
+Route::controller(StripeWebhookController::class)->group(function () {
+    Route::post('/stripe/webhook', 'handleWebhook')->name('stripe.webhook');
+});
 
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');

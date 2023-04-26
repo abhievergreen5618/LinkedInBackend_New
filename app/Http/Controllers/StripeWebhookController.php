@@ -195,7 +195,7 @@ class StripeWebhookController extends Controller
             case 'subscription_schedule.canceled':
             $subscriptionSchedule = $event->data->object;
             $customer = Customer::retrieve("cus_NmBbKplxAQeVdr");
-            dd($customer->metadata);
+            dd($customer->metadata->auth0_user_id);
             break;
             case 'subscription_schedule.expiring':
                 $subscriptionSchedule = $event->data->object;

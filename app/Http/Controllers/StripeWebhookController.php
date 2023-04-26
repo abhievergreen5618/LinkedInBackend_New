@@ -55,8 +55,9 @@ class StripeWebhookController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function replayWebhook($filename)
+    public function replayWebhook()
     {
+        $filename = 'stripe_webhook_canceled.json';
         // Get the contents of the specified file
         $payload = Storage::get($filename);
 

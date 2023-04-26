@@ -85,7 +85,7 @@ class StripeController extends Controller
             $response = Session::retrieve($request['session_id']);
             if ($response->payment_status == "unpaid") {
 
-                $access_token = $this->get_access_token();
+                $access_token = get_access_token();
 
                 $user_id = $request['user_id'];
 
@@ -100,7 +100,7 @@ class StripeController extends Controller
 
                 $metadata = json_encode($metadata);
 
-                $this->update_user_meta($access_token,$user_id,$url,$metadata);
+                update_user_meta($access_token,$url,$metadata);
 
                 return redirect()->route("failed_page");
 

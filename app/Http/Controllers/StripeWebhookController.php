@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Event;
+use Stripe\Customer;
 
 class StripeWebhookController extends Controller
 {
     public function handleWebhook(Request $request)
     {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
         $payload = $request->getContent();
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
         $event = null;
@@ -32,8 +34,8 @@ class StripeWebhookController extends Controller
         switch ($event->type) {
                 case 'subscription_schedule.canceled':
                 $subscriptionSchedule = $event->data->object;
-                // get_customer($subscriptionSchedule.data.customer);
-                dd($subscriptionSchedule->customer->customer);
+                $customer = Customer::retrieve($subscriptionSchedule->customer->customer);
+                dd($customer);
                 break;
                 case 'subscription_schedule.expiring':
                     $subscriptionSchedule = $event->data->object;

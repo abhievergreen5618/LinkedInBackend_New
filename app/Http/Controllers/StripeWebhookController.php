@@ -38,12 +38,25 @@ class StripeWebhookController extends Controller
         // Handle the event
         switch ($event->type) {
                 case 'subscription_schedule.canceled':
-                $subscriptionSchedule = $event->data->object;
-                $customer = Customer::retrieve($subscriptionSchedule->customer->customer);
-                dd($customer);
-                break;
-                case 'subscription_schedule.expiring':
                     $subscriptionSchedule = $event->data->object;
+                    $customer = Customer::retrieve($subscriptionSchedule->customer);
+                    dd($customer);
+                    $user_id = $customer->metadata->auth0_user_id;
+                    $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
+                    $access_token = get_access_token();
+                    $metadata = ['role' => 'free'];
+                    $metadata = json_encode($metadata);
+                    update_user_meta($access_token,$url,$metadata);
+                break;
+                case 'subscription_schedule.expired':
+                    $subscriptionSchedule = $event->data->object;
+                    $customer = Customer::retrieve($subscriptionSchedule->customer);
+                    $user_id = $customer->metadata->auth0_user_id;
+                    $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
+                    $access_token = get_access_token();
+                    $metadata = ['role' => 'free'];
+                    $metadata = json_encode($metadata);
+                    update_user_meta($access_token,$url,$metadata);
                 break;
             // Add more cases for other event types you want to handle
             default:
@@ -194,17 +207,13 @@ class StripeWebhookController extends Controller
         switch ($event->type) {
             case 'subscription_schedule.canceled':
             $subscriptionSchedule = $event->data->object;
-            $customer = Customer::retrieve("cus_NbvfAI0k0xNLLJ");
+            $customer = Customer::retrieve($subscriptionSchedule->customer);
             $user_id = $customer->metadata->auth0_user_id;
-
             $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
             $access_token = get_access_token();
-            $metadata['user_metadata'] = [];
-            $metadata['role'] = "free";
+            $metadata = ['role' => 'free'];
             $metadata = json_encode($metadata);
-
             update_user_meta($access_token,$url,$metadata);
-
             break;
             case 'subscription_schedule.expiring':
                 $subscriptionSchedule = $event->data->object;

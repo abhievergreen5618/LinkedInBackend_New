@@ -60,7 +60,7 @@ class StripeWebhookController extends Controller
         $filename = 'stripe_webhook_canceled.json';
         // Get the contents of the specified file
         $payload = Storage::get($filename);
-        dd(json_decode($payload, true));
+        dd($payload);
         // Construct a new event object from the payload
         $event = \Stripe\Event::constructFrom(json_decode($payload, true));
 

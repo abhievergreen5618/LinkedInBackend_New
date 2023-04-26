@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\StripeController;
 
 /*
@@ -25,6 +26,8 @@ Route::controller(StripeController::class)->group(function () {
     Route::get('/success', 'success')->name('success_url');
     Route::get('/cancel', 'cancel')->name('cancel_url');
 });
+
+Route::post('/stripe/webhook', 'StripeWebhookController@handleWebhook');
 
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');

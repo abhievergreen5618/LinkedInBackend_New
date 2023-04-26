@@ -65,15 +65,19 @@ class StripeWebhookController extends Controller
 
         // Handle the event
         switch ($event->type) {
-            case 'charge.succeeded':
-                // Handle successful charge event
-                break;
-            case 'charge.failed':
-                // Handle failed charge event
-                break;
-            // Add more event types here
+            case 'subscription_schedule.canceled':
+            $subscriptionSchedule = $event->data->object;
+            $customer = Customer::retrieve($subscriptionSchedule->customer->customer);
+            dd($customer);
+            break;
+            case 'subscription_schedule.expiring':
+                $subscriptionSchedule = $event->data->object;
+            break;
+        // Add more cases for other event types you want to handle
+        default:
+            // Unexpected event type
+            return response()->json(['error' => 'Unexpected event type'], 400);
         }
-
         return response()->json(['success' => true]);
     }
 }

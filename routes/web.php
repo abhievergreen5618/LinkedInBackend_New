@@ -29,7 +29,8 @@ Route::controller(StripeController::class)->group(function () {
 
 
 Route::controller(StripeWebhookController::class)->group(function () {
-    Route::post('/stripe/webhook', 'handleWebhook')->name('stripe.webhook');
+    // Route::post('/stripe/webhook', 'handleWebhook')->name('stripe.webhook');
+    Route::get('/stripe/webhook', 'replayWebhook')->name('stripe.webhook');
 });
 
 Route::get('/clear-cache', function() {

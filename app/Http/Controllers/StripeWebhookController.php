@@ -57,6 +57,7 @@ class StripeWebhookController extends Controller
 
     public function replayWebhook()
     {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
         // Get the contents of the specified file
         $json = '{
             "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",

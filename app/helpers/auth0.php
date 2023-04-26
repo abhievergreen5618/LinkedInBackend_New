@@ -27,7 +27,6 @@ function get_access_token()
     return "";
     } else {
     $response = json_decode($response);
-    dd($response);
         return $response->access_token;
     }
 }

@@ -187,7 +187,7 @@ class StripeWebhookController extends Controller
 
         $payload = json_decode($json,true);
         // Construct a new event object from the payload
-        $event = \Stripe\Event::constructFrom(json_decode($payload, true));
+        $event = \Stripe\Event::constructFrom($payload);
 
         // Handle the event
         switch ($event->type) {

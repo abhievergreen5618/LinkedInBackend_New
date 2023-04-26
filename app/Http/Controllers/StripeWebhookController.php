@@ -32,6 +32,7 @@ class StripeWebhookController extends Controller
         switch ($event->type) {
                 case 'subscription_schedule.canceled':
                 $subscriptionSchedule = $event->data->object;
+                // get_customer($subscriptionSchedule.data.customer);
                 dd($subscriptionSchedule);
                 break;
                 case 'subscription_schedule.expiring':

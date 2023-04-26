@@ -61,4 +61,10 @@ function update_user_meta($access_token,$url,$metadata)
     //   dd($response);
     }
 }
+
+function get_customer($stripe,$customerId)
+{
+    $customer = $stripe->customers->retrieve($customerId,[]);
+    return $customer;
+}
 ?>

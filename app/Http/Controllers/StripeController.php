@@ -24,7 +24,7 @@ class StripeController extends Controller
 
         $session = \Stripe\BillingPortal\Session::create([
             'customer' => $customer,
-            'return_url' => route('home'),
+            'return_url' => "https://www.getdabble.io/how-it-works",
         ]);
 
         return response()->json(["session_url"  => $session->url]);
@@ -71,7 +71,8 @@ class StripeController extends Controller
 
                 update_user_meta($access_token,$url,$metadata);
 
-                return redirect()->route("thankyou_page");
+                // return redirect()->route("thankyou_page");
+                return redirect()->to('https://www.getdabble.io/confirmation');
 
             }
 

@@ -38,6 +38,7 @@ class StripeController extends Controller
             'payment_method_types' => ['card'],
             'line_items' => $request['lineItems'],
             'mode' => 'subscription',
+            'allow_promotion_codes' => true,
             'success_url' => route('success_url').$parm,
             'cancel_url' => route('cancel_url') .$parm,
             'customer' => $request['clientReferenceId'],

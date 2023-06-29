@@ -27,6 +27,13 @@ Route::controller(StripeController::class)->group(function () {
     Route::get('/cancel', 'cancel')->name('cancel_url');
 });
 
+Route::controller(PostPerfectStripeController::class)->group(function () {
+    Route::get('/postperfect/thankyou', 'thankyou')->name('postperfect_thankyou_page');
+    Route::get('/postperfect/failed', 'failed')->name('postperfect_failed_page');
+    Route::get('/postperfect/success', 'success')->name('postperfect_success_url');
+    Route::get('/postperfect/cancel', 'cancel')->name('postperfect_cancel_url');
+});
+
 
 Route::controller(StripeWebhookController::class)->group(function () {
     Route::post('/stripe/webhook', 'handleWebhook')->name('stripe.webhook');

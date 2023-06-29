@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\PostPerfectStripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(StripeController::class)->group(function () {
     Route::post('/create/session','createCheckoutSession')->name('create.session');
     Route::post('/customer-portal','customerPortal')->name('customer-portal');
+});
+
+
+Route::controller(PostPerfectStripeController::class)->group(function () {
+    Route::post('/create/session/postperfect','createCheckoutSession')->name('create.session');
+    Route::post('/customer-portal/postperfect','customerPortal')->name('customer-portal');
 });

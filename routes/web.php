@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\PostPerfectStripeController;
 
 /*
 |--------------------------------------------------------------------------

@@ -45,7 +45,7 @@ class PostPerfectStripeController extends Controller
             'customer' => $request['clientReferenceId'],
         ]);
 
-        return response()->json(['session_id' => $session->id]);
+        return response()->json(['session_url' => $session->url]);
 
     }
 

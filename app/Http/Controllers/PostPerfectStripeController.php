@@ -63,9 +63,9 @@ class PostPerfectStripeController extends Controller
                 $url = "https://".$this->domain."/api/v2/users/".$user_id;
 
                 $metadata = [
-                                'stripe_subscription_id' => $response->subscription,
-                                'subscription_start' => date('Y-m-d H:i:s',$response->created),
-                                'subscription_end' => date('Y-m-d H:i:s',$response->expires_at),
+                                'post_perfect_stripe_subscription_id' => $response->subscription,
+                                'post_perfect_subscription_start' => date('Y-m-d H:i:s',$response->created),
+                                'post_perfect_subscription_end' => date('Y-m-d H:i:s',$response->expires_at),
                                 'post_perfect_role' => 'paid',
                             ];
 

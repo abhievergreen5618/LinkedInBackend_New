@@ -74,7 +74,7 @@ class PostPerfectStripeController extends Controller
                 update_user_meta($access_token,$url,$metadata);
 
                 // return redirect()->route("thankyou_page");
-                return redirect()->to('https://www.getdabble.io/confirmation');
+                return redirect()->to('https://twitter.com/home');
 
             }
 

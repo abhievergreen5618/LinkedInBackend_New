@@ -71,17 +71,6 @@ class StripeWebhookController extends Controller
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $filename = 'stripe_webhook_canceled.json';
-
-        // Get the content of the file
-        $content = Storage::get($filename);
-
-        // Now you have the content in the $content variable
-        // You can do whatever you need with the content, such as decoding it from JSON
-
-        $payload = json_decode($content, true); // Assuming the content is in JSON format
-
-        dd($payload);
         // Get the contents of the specified file
         $json = '{
             "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",
@@ -97,7 +86,7 @@ class StripeWebhookController extends Controller
                     "completed_at": null,
                     "created": 1682495772,
                     "current_phase": null,
-                    "customer": "cus_NmcRoDAuOGcy1x",
+                    "customer": "cus_OF4OSDKsNctodd",
                     "default_settings": {
                         "application_fee_percent": null,
                         "automatic_tax": {
@@ -218,6 +207,7 @@ class StripeWebhookController extends Controller
         switch ($event->type) {
             case 'subscription_schedule.canceled':
                 $subscriptionSchedule = $event->data->object;
+                dd($subscriptionSchedule);
                 $customer = Customer::retrieve($subscriptionSchedule->customer);
                 $user_id = $customer->metadata->auth0_user_id;
                 $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;

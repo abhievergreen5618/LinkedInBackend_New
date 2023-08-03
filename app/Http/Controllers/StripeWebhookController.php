@@ -207,7 +207,7 @@ class StripeWebhookController extends Controller
         switch ($event->type) {
             case 'subscription_schedule.canceled':
                 $subscriptionSchedule = $event->data->object;
-                dd($subscriptionSchedule);
+                dd($subscriptionSchedule->product);
                 $customer = Customer::retrieve($subscriptionSchedule->customer);
                 $user_id = $customer->metadata->auth0_user_id;
                 $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;

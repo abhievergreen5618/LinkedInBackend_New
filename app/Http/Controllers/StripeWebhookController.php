@@ -23,10 +23,10 @@ class StripeWebhookController extends Controller
                 $sig_header,
                 env('STRIPE_WEBHOOK_SECRET')
             );
-        } catch(\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException $e) {
             // Invalid payload
             return response()->json(['error' => 'Invalid payload'], 400);
-        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
             return response()->json(['error' => 'Invalid signature'], 400);
         }
@@ -37,27 +37,27 @@ class StripeWebhookController extends Controller
 
         // Handle the event
         switch ($event->type) {
-                case 'subscription_schedule.canceled':
-                    $subscriptionSchedule = $event->data->object;
-                    $customer = Customer::retrieve($subscriptionSchedule->customer);
-                    $user_id = $customer->metadata->auth0_user_id;
-                    $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
-                    $access_token = get_access_token();
-                    $metadata = ['role' => 'free'];
-                    $metadata = json_encode($metadata);
-                    update_user_meta($access_token,$url,$metadata);
+            case 'subscription_schedule.canceled':
+                $subscriptionSchedule = $event->data->object;
+                $customer = Customer::retrieve($subscriptionSchedule->customer);
+                $user_id = $customer->metadata->auth0_user_id;
+                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
+                $access_token = get_access_token();
+                $metadata = ['role' => 'free'];
+                $metadata = json_encode($metadata);
+                update_user_meta($access_token, $url, $metadata);
                 break;
-                case 'subscription_schedule.expiring':
-                    $subscriptionSchedule = $event->data->object;
-                    $customer = Customer::retrieve($subscriptionSchedule->customer);
-                    $user_id = $customer->metadata->auth0_user_id;
-                    $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
-                    $access_token = get_access_token();
-                    $metadata = ['role' => 'free'];
-                    $metadata = json_encode($metadata);
-                    update_user_meta($access_token,$url,$metadata);
+            case 'subscription_schedule.expiring':
+                $subscriptionSchedule = $event->data->object;
+                $customer = Customer::retrieve($subscriptionSchedule->customer);
+                $user_id = $customer->metadata->auth0_user_id;
+                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
+                $access_token = get_access_token();
+                $metadata = ['role' => 'free'];
+                $metadata = json_encode($metadata);
+                update_user_meta($access_token, $url, $metadata);
                 break;
-            // Add more cases for other event types you want to handle
+                // Add more cases for other event types you want to handle
             default:
                 // Unexpected event type
                 return response()->json(['error' => 'Unexpected event type'], 400);
@@ -70,6 +70,18 @@ class StripeWebhookController extends Controller
     public function replayWebhook()
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $filename = 'stripe_webhook_canceled.json';
+
+// Get the content of the file
+$content = Storage::get($filename);
+
+// Now you have the content in the $content variable
+// You can do whatever you need with the content, such as decoding it from JSON
+
+$payload = json_decode($content, true); // Assuming the content is in JSON format
+
+dd($payload);
         // Get the contents of the specified file
         $json = '{
             "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",
@@ -198,7 +210,7 @@ class StripeWebhookController extends Controller
             "type": "subscription_schedule.canceled"
         }';
 
-        $payload = json_decode($json,true);
+        $payload = json_decode($json, true);
         // Construct a new event object from the payload
         $event = \Stripe\Event::constructFrom($payload);
 
@@ -208,19 +220,19 @@ class StripeWebhookController extends Controller
                 $subscriptionSchedule = $event->data->object;
                 $customer = Customer::retrieve($subscriptionSchedule->customer);
                 $user_id = $customer->metadata->auth0_user_id;
-                $url = "https://".env('AUTH0_DOMAIN')."/api/v2/users/".$user_id;
+                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
                 $access_token = get_access_token();
                 $metadata = ['role' => 'free'];
                 $metadata = json_encode($metadata);
-                update_user_meta($access_token,$url,$metadata);
-            break;
+                update_user_meta($access_token, $url, $metadata);
+                break;
             case 'subscription_schedule.expiring':
                 $subscriptionSchedule = $event->data->object;
-            break;
-        // Add more cases for other event types you want to handle
-        default:
-            // Unexpected event type
-            return response()->json(['error' => 'Unexpected event type'], 400);
+                break;
+                // Add more cases for other event types you want to handle
+            default:
+                // Unexpected event type
+                return response()->json(['error' => 'Unexpected event type'], 400);
         }
         return response()->json(['success' => true]);
     }

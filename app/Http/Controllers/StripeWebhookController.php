@@ -73,15 +73,15 @@ class StripeWebhookController extends Controller
 
         $filename = 'stripe_webhook_canceled.json';
 
-// Get the content of the file
-$content = Storage::get($filename);
+        // Get the content of the file
+        $content = Storage::get($filename);
 
-// Now you have the content in the $content variable
-// You can do whatever you need with the content, such as decoding it from JSON
+        // Now you have the content in the $content variable
+        // You can do whatever you need with the content, such as decoding it from JSON
 
-$payload = json_decode($content, true); // Assuming the content is in JSON format
+        $payload = json_decode($content, true); // Assuming the content is in JSON format
 
-dd($payload);
+        dd($payload);
         // Get the contents of the specified file
         $json = '{
             "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",

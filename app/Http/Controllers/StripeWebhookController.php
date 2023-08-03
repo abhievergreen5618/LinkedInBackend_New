@@ -43,187 +43,200 @@ class StripeWebhookController extends Controller
                 $user_id = $customer->metadata->auth0_user_id;
                 $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
                 $access_token = get_access_token();
-                $metadata = ['role' => 'free'];
-                $metadata = json_encode($metadata);
-                update_user_meta($access_token, $url, $metadata);
-                break;
-            case 'subscription_schedule.expiring':
-                $subscriptionSchedule = $event->data->object;
-                $customer = Customer::retrieve($subscriptionSchedule->customer);
-                $user_id = $customer->metadata->auth0_user_id;
-                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
-                $access_token = get_access_token();
-                $metadata = ['role' => 'free'];
-                $metadata = json_encode($metadata);
-                update_user_meta($access_token, $url, $metadata);
-                break;
-                // Add more cases for other event types you want to handle
-            default:
-                // Unexpected event type
-                return response()->json(['error' => 'Unexpected event type'], 400);
-        }
-
-
-        return response()->json(['success' => true]);
-    }
-
-    public function replayWebhook()
-    {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        // Get the contents of the specified file
-        $json = '{
-            "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",
-            "object": "event",
-            "api_version": "2022-11-15",
-            "created": 1682495773,
-            "data": {
-                "object": {
-                    "id": "sub_sched_1N13CyBXwIeXC3JaRNkzdCuN",
-                    "object": "subscription_schedule",
-                    "application": null,
-                    "canceled_at": 1682495773,
-                    "completed_at": null,
-                    "created": 1682495772,
-                    "current_phase": null,
-                    "customer": "cus_OF4OSDKsNctodd",
-                    "default_settings": {
-                        "application_fee_percent": null,
-                        "automatic_tax": {
-                            "enabled": false
-                        },
-                        "billing_cycle_anchor": "automatic",
-                        "billing_thresholds": null,
-                        "collection_method": "charge_automatically",
-                        "default_payment_method": null,
-                        "default_source": null,
-                        "description": null,
-                        "invoice_settings": null,
-                        "on_behalf_of": null,
-                        "transfer_data": null
-                    },
-                    "end_behavior": "release",
-                    "livemode": false,
-                    "metadata": {},
-                    "phases": [{
-                            "add_invoice_items": [
-
-                            ],
-                            "application_fee_percent": null,
-                            "billing_cycle_anchor": null,
-                            "billing_thresholds": null,
-                            "collection_method": null,
-                            "coupon": null,
-                            "currency": "usd",
-                            "default_payment_method": null,
-                            "default_tax_rates": [
-
-                            ],
-                            "description": null,
-                            "end_date": 1685087772,
-                            "invoice_settings": null,
-                            "items": [{
-                                "billing_thresholds": null,
-                                "metadata": {},
-                                "plan": "price_1N13CxBXwIeXC3Ja9wG70mhd",
-                                "price": "price_1N13CxBXwIeXC3Ja9wG70mhd",
-                                "quantity": 1,
-                                "tax_rates": [
-
-                                ]
-                            }],
-                            "metadata": {},
-                            "on_behalf_of": null,
-                            "proration_behavior": "create_prorations",
-                            "start_date": 1682495772,
-                            "transfer_data": null,
-                            "trial_end": null
-                        },
-                        {
-                            "add_invoice_items": [
-
-                            ],
-                            "application_fee_percent": null,
-                            "billing_cycle_anchor": null,
-                            "billing_thresholds": null,
-                            "collection_method": null,
-                            "coupon": null,
-                            "currency": "usd",
-                            "default_payment_method": null,
-                            "default_tax_rates": [
-
-                            ],
-                            "description": null,
-                            "end_date": 1687766172,
-                            "invoice_settings": null,
-                            "items": [{
-                                "billing_thresholds": null,
-                                "metadata": {},
-                                "plan": "price_1N13CxBXwIeXC3Ja9wG70mhd",
-                                "price": "price_1N13CxBXwIeXC3Ja9wG70mhd",
-                                "quantity": 2,
-                                "tax_rates": [
-
-                                ]
-                            }],
-                            "metadata": {},
-                            "on_behalf_of": null,
-                            "proration_behavior": "create_prorations",
-                            "start_date": 1685087772,
-                            "transfer_data": null,
-                            "trial_end": null
-                        }
-                    ],
-                    "released_at": null,
-                    "released_subscription": null,
-                    "renewal_interval": null,
-                    "status": "canceled",
-                    "subscription": "sub_1N13CyBXwIeXC3JavH4e64wK",
-                    "test_clock": null
-                },
-                "previous_attributes": {
-                    "canceled_at": null,
-                    "current_phase": {
-                        "end_date": 1685087772,
-                        "start_date": 1682495772
-                    },
-                    "status": "active"
+                if(isset($subscriptionSchedule['phases'][0]['items'][0]['price']) && $subscriptionSchedule['phases'][0]['items'][0]['price'] == "price_1NNVDABXwIeXC3JaqXbjz5iC")
+                {
+                    $metadata = ['post_perfect_role' => 'free'];
                 }
-            },
-            "livemode": false,
-            "pending_webhooks": 1,
-            "request": {
-                "id": "req_mrYuPNxYJunfxj",
-                "idempotency_key": "d8f318c4-7dcf-4926-8907-5fd83b584521"
-            },
-            "type": "subscription_schedule.canceled"
-        }';
-
-        $payload = json_decode($json, true);
-        // Construct a new event object from the payload
-        $event = \Stripe\Event::constructFrom($payload);
-
-        // Handle the event
-        switch ($event->type) {
-            case 'subscription_schedule.canceled':
-                $subscriptionSchedule = $event->data->object;
-                dd($subscriptionSchedule['phases'][0]['items'][0]['price']);
-                $customer = Customer::retrieve($subscriptionSchedule->customer);
-                $user_id = $customer->metadata->auth0_user_id;
-                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
-                $access_token = get_access_token();
-                $metadata = ['role' => 'free'];
+                else
+                {
+                    $metadata = ['role' => 'free'];
+                }
                 $metadata = json_encode($metadata);
                 update_user_meta($access_token, $url, $metadata);
                 break;
             case 'subscription_schedule.expiring':
                 $subscriptionSchedule = $event->data->object;
+                $customer = Customer::retrieve($subscriptionSchedule->customer);
+                $user_id = $customer->metadata->auth0_user_id;
+                $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
+                $access_token = get_access_token();
+                if(isset($subscriptionSchedule['phases'][0]['items'][0]['price']) && $subscriptionSchedule['phases'][0]['items'][0]['price'] == "price_1NNVDABXwIeXC3JaqXbjz5iC")
+                {
+                    $metadata = ['post_perfect_role' => 'free'];
+                }
+                else
+                {
+                    $metadata = ['role' => 'free'];
+                }
+                $metadata = json_encode($metadata);
+                update_user_meta($access_token, $url, $metadata);
                 break;
                 // Add more cases for other event types you want to handle
             default:
                 // Unexpected event type
                 return response()->json(['error' => 'Unexpected event type'], 400);
         }
+
+
         return response()->json(['success' => true]);
     }
+
+    // public function replayWebhook()
+    // {
+    //     Stripe::setApiKey(env('STRIPE_SECRET'));
+
+    //     // Get the contents of the specified file
+    //     $json = '{
+    //         "id": "evt_1N13CzBXwIeXC3Ja9SD3EXda",
+    //         "object": "event",
+    //         "api_version": "2022-11-15",
+    //         "created": 1682495773,
+    //         "data": {
+    //             "object": {
+    //                 "id": "sub_sched_1N13CyBXwIeXC3JaRNkzdCuN",
+    //                 "object": "subscription_schedule",
+    //                 "application": null,
+    //                 "canceled_at": 1682495773,
+    //                 "completed_at": null,
+    //                 "created": 1682495772,
+    //                 "current_phase": null,
+    //                 "customer": "cus_OF4OSDKsNctodd",
+    //                 "default_settings": {
+    //                     "application_fee_percent": null,
+    //                     "automatic_tax": {
+    //                         "enabled": false
+    //                     },
+    //                     "billing_cycle_anchor": "automatic",
+    //                     "billing_thresholds": null,
+    //                     "collection_method": "charge_automatically",
+    //                     "default_payment_method": null,
+    //                     "default_source": null,
+    //                     "description": null,
+    //                     "invoice_settings": null,
+    //                     "on_behalf_of": null,
+    //                     "transfer_data": null
+    //                 },
+    //                 "end_behavior": "release",
+    //                 "livemode": false,
+    //                 "metadata": {},
+    //                 "phases": [{
+    //                         "add_invoice_items": [
+
+    //                         ],
+    //                         "application_fee_percent": null,
+    //                         "billing_cycle_anchor": null,
+    //                         "billing_thresholds": null,
+    //                         "collection_method": null,
+    //                         "coupon": null,
+    //                         "currency": "usd",
+    //                         "default_payment_method": null,
+    //                         "default_tax_rates": [
+
+    //                         ],
+    //                         "description": null,
+    //                         "end_date": 1685087772,
+    //                         "invoice_settings": null,
+    //                         "items": [{
+    //                             "billing_thresholds": null,
+    //                             "metadata": {},
+    //                             "plan": "price_1N13CxBXwIeXC3Ja9wG70mhd",
+    //                             "price": "price_1N13CxBXwIeXC3Ja9wG70mhd",
+    //                             "quantity": 1,
+    //                             "tax_rates": [
+
+    //                             ]
+    //                         }],
+    //                         "metadata": {},
+    //                         "on_behalf_of": null,
+    //                         "proration_behavior": "create_prorations",
+    //                         "start_date": 1682495772,
+    //                         "transfer_data": null,
+    //                         "trial_end": null
+    //                     },
+    //                     {
+    //                         "add_invoice_items": [
+
+    //                         ],
+    //                         "application_fee_percent": null,
+    //                         "billing_cycle_anchor": null,
+    //                         "billing_thresholds": null,
+    //                         "collection_method": null,
+    //                         "coupon": null,
+    //                         "currency": "usd",
+    //                         "default_payment_method": null,
+    //                         "default_tax_rates": [
+
+    //                         ],
+    //                         "description": null,
+    //                         "end_date": 1687766172,
+    //                         "invoice_settings": null,
+    //                         "items": [{
+    //                             "billing_thresholds": null,
+    //                             "metadata": {},
+    //                             "plan": "price_1N13CxBXwIeXC3Ja9wG70mhd",
+    //                             "price": "price_1N13CxBXwIeXC3Ja9wG70mhd",
+    //                             "quantity": 2,
+    //                             "tax_rates": [
+
+    //                             ]
+    //                         }],
+    //                         "metadata": {},
+    //                         "on_behalf_of": null,
+    //                         "proration_behavior": "create_prorations",
+    //                         "start_date": 1685087772,
+    //                         "transfer_data": null,
+    //                         "trial_end": null
+    //                     }
+    //                 ],
+    //                 "released_at": null,
+    //                 "released_subscription": null,
+    //                 "renewal_interval": null,
+    //                 "status": "canceled",
+    //                 "subscription": "sub_1N13CyBXwIeXC3JavH4e64wK",
+    //                 "test_clock": null
+    //             },
+    //             "previous_attributes": {
+    //                 "canceled_at": null,
+    //                 "current_phase": {
+    //                     "end_date": 1685087772,
+    //                     "start_date": 1682495772
+    //                 },
+    //                 "status": "active"
+    //             }
+    //         },
+    //         "livemode": false,
+    //         "pending_webhooks": 1,
+    //         "request": {
+    //             "id": "req_mrYuPNxYJunfxj",
+    //             "idempotency_key": "d8f318c4-7dcf-4926-8907-5fd83b584521"
+    //         },
+    //         "type": "subscription_schedule.canceled"
+    //     }';
+
+    //     $payload = json_decode($json, true);
+    //     // Construct a new event object from the payload
+    //     $event = \Stripe\Event::constructFrom($payload);
+
+    //     // Handle the event
+    //     switch ($event->type) {
+    //         case 'subscription_schedule.canceled':
+    //             $subscriptionSchedule = $event->data->object;
+    //             $customer = Customer::retrieve($subscriptionSchedule->customer);
+    //             $user_id = $customer->metadata->auth0_user_id;
+    //             $url = "https://" . env('AUTH0_DOMAIN') . "/api/v2/users/" . $user_id;
+    //             $access_token = get_access_token();
+    //             $metadata = ['role' => 'free'];
+    //             $metadata = json_encode($metadata);
+    //             update_user_meta($access_token, $url, $metadata);
+    //             break;
+    //         case 'subscription_schedule.expiring':
+    //             $subscriptionSchedule = $event->data->object;
+    //             break;
+    //             // Add more cases for other event types you want to handle
+    //         default:
+    //             // Unexpected event type
+    //             return response()->json(['error' => 'Unexpected event type'], 400);
+    //     }
+    //     return response()->json(['success' => true]);
+    // }
 }
